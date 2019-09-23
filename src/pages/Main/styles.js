@@ -20,18 +20,31 @@ export const Container = styled.div`
   }
 `;
 
-export const Form = styled.form`
-  margin-top: 30px;
+export const Error = styled.div`
+  color: red;
+  padding-top: 20px;
+`;
+
+export const Form = styled.form.attrs(props => ({
+  err: props.err,
+}))`
+  margin-top: 5px;
   display: flex;
   flex-direction: row;
+  
+    input{
+      flex: 1;
+      border: 1px solid #eee;
+      padding: 10px 15px;
+      border-radius: 4px;
+      font-size: 16px;
+    }
 
-  input{
-    flex: 1;
-    border: 1px solid #eee;
-    padding: 10px 15px;
-    border-radius: 4px;
-    font-size: 16px;
-  }
+    ${props => props.err && css`
+    input{
+      border: 1px solid red;
+    }
+  `};
 `;
 
 const rotate = keyframes`
@@ -79,8 +92,15 @@ li {
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+
   & + li { /*applied stylization only to the next li of the first*/
     border-top: 1px solid #eee;
+  }
+
+  div{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
 }
 
@@ -88,4 +108,12 @@ a{
   color: #7159c1;
   text-decoration: none;
 }
+`;
+
+export const DeleteButton = styled.button`
+  border: none;
+  margin-left: 8px;
+  background: #7159c1;
+  border-radius: 4px;
+  padding: 5px;
 `;

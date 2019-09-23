@@ -1,17 +1,18 @@
 import React, { Component } from 'react';
-import { FaGitAlt, FaPlus, FaSpinner } from 'react-icons/fa';
+import { FaGitAlt, FaPlus, FaSpinner, FaTrashAlt } from 'react-icons/fa';
 import { Link } from 'react-router-dom'
 
 import api from '../../services/api';
 
 import Container from '../../components/Container';
-import { Form, SubmitButton, List } from './styles'
+import { Form, SubmitButton, List, DeleteButton, Error } from './styles'
 
 export default class Main extends Component {
   state = {
     newRepo: '',
     repositories: [],
     loading: false,
+    err: false,
   };
 
   // Load datas in localStorage
@@ -37,27 +38,49 @@ export default class Main extends Component {
   }
 
   handleSubmit = async e => {
+
     e.preventDefault();
 
-    this.setState({ loading: true });
+    this.setState({ loading: true, err: false });
 
-    const { newRepo, repositories } = this.state;
+    try {
+      const { newRepo, repositories } = this.state;
 
-    const response = await api.get(`/repos/${newRepo}`);
+      const repoExists = repositories.find(repo => repo.name === newRepo);
 
-    const data = {
-      name: response.data.full_name,
-    };
+      if (newRepo === '') throw 'emptyInput'
 
-    this.setState({
-      repositories: [...repositories, data],
-      newRepo: '',
-      loading: false,
-    });
-  };
+      if (repoExists) throw 'repoExists'
+
+      const response = await api.get(`/repos/${newRepo}`);
+
+      const data = {
+        name: response.data.full_name,
+      };
+
+      this.setState({
+        repositories: [...repositories, data],
+        newRepo: '',
+        loading: false,
+      });
+    } catch (err) {
+      if (err === 'repoExists') {
+        (alert('Repositório duplicado'))
+        this.setState({ newRepo: '' })
+      }
+      if (err === 'emptyInput') {
+        (alert('Você precisa indicar um repositório'))
+      }
+      else {
+        this.setState({ err: true })
+      }
+    } finally {
+      this.setState({ loading: false });
+    }
+  }
 
   render() {
-    const { newRepo, loading, repositories } = this.state;
+    const { newRepo, loading, repositories, err } = this.state;
 
     return (
       <Container>
@@ -65,11 +88,14 @@ export default class Main extends Component {
           <FaGitAlt />
           Repositórios
         </h1>
-
-        <Form onSubmit={this.handleSubmit}>
+        <Error err={err}>
+          {err && (<p>Repositório não encontrado</p>)}
+        </Error>
+        <Form onSubmit={this.handleSubmit} err={err}>
           <input
+            err={err}
             type="text"
-            placeholder="Nome de usuário / nome do repositório"
+            placeholder="Adicione o 'Nome de usuário / nome do repositório'"
             value={newRepo}
             onChange={this.handleInputChange}
           />
@@ -83,12 +109,15 @@ export default class Main extends Component {
           </SubmitButton>
         </Form>
         <List>
-          {repositories.map(repository => (
+          {repositories.map(repository =>
             <li key={repository.name}>
               <span>{repository.name}</span>
-              <Link to={`/repository/${encodeURIComponent(repository.name)}`}>Detalhes</Link>
+              <div>
+                <Link to={`/repository/${encodeURIComponent(repository.name)}`}>Detalhes</Link>
+                <DeleteButton onDelete={() => this.handleDelete(repository)}><FaTrashAlt color="#FFF" size={12} /></DeleteButton>
+              </div>
             </li>
-          ))}
+          )}
         </List>
       </Container >
     );
