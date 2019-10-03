@@ -1,68 +1,43 @@
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# Challenge 05. Application with ReactJS
 
-## Available Scripts
+In this challenge you will add new functionality to the application we developed throughout this module.
 
-In the project directory, you can run:
+## Functionalities
 
-### `npm start`
+### Catching Errors
 
-Runs the app in the development mode.<br>
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Add a `try / catch` around the code present in the` handleSubmit` function present in the `Main` component and if a repository is not found in the Github API add a red border around the input where the user entered the name of the repository.
 
-The page will reload if you make edits.<br>
-You will also see any lint errors in the console.
+### Duplicate Repository
 
-### `npm test`
+Before calling the API in the `handleSubmit` function, check to see if the repository is not duplicated, ie if it does not already exist in the state of` repositories`.
 
-Launches the test runner in the interactive watch mode.<br>
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+If so, it will trigger an error, and the code will fall into the `catch` of` try / catch` created in the previous functionality.
 
-### `npm run build`
+`` `js
+throw new Error ('Duplicate Repository');
+`` `
 
-Builds the app for production to the `build` folder.<br>
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### State Filter
 
-The build is minified and the filenames include the hashes.<br>
-Your app is ready to be deployed!
+Add a state filter to the Issues listing we created in the repository detail. The state represents whether the issue is open, closed, or an option to display them all.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Request Examples:
 
-### `npm run eject`
+`` `
+https://api.github.com/repos/rocketseat/unform/issues?state=all
+https://api.github.com/repos/rocketseat/unform/issues?state=open
+https://api.github.com/repos/rocketseat/unform/issues?state=closed
+`` `
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+You can find the documentation [at this link] (https://developer.github.com/v3/issues/#parameters-1);
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### Pagination
 
-Instead, it will copy all the configuration files and the transitive dependencies (Webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+Add pagination to the issues listed in the repository detail. The Github API lists a maximum of 30 issues per page and you can control the current page number by a parameter in the request address:
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+`` `
+https://api.github.com/repos/rocketseat/unform/issues?page=2
+`` `
 
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/code-splitting
-
-### Analyzing the Bundle Size
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size
-
-### Making a Progressive Web App
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
-
-### Advanced Configuration
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/advanced-configuration
-
-### Deployment
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/deployment
-
-### `npm run build` fails to minify
-
-This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
+Add only a next page and previous page button. The previous page button should be disabled on the first page.
